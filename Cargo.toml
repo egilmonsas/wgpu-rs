@@ -18,6 +18,7 @@ winit = "0.27.3"
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 console_error_panic_hook = "0.1.6"
 console_log = "0.2.0"
+tracing-wasm="0.2.1"
 wgpu = { version = "0.13.1", features = ["webgl"]}
 wasm-bindgen = "0.2"
 wasm-bindgen-futures = "0.4.30"

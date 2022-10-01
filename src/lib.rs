@@ -1,11 +1,4 @@
-#[cfg(target_arch = "wasm32")]
-use tracing_subscriber::fmt::format::Pretty;
-#[cfg(target_arch = "wasm32")]
-use tracing_subscriber::fmt::time::UtcTime;
-#[cfg(target_arch = "wasm32")]
-use tracing_subscriber::prelude::*;
-#[cfg(target_arch = "wasm32")]
-use tracing_web::{performance_layer, MakeConsoleWriter};
+use tracing::{error, info, warn};
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 use winit::{
@@ -17,20 +10,15 @@ use winit::{
 pub fn run() {
     cfg_if::cfg_if! {
         if #[cfg(target_arch = "wasm32")] {
-                std::panic::set_hook(Box::new(console_error_panic_hook::hook));
-            let fmt_layer= tracing_subscriber::fmt::layer()
-                .with_ansi(false)
-                .with_timer(UtcTime::rfc_3339())
-                .with_writer(MakeConsoleWriter);
-            let perf_layer = performance_layer()
-                .with_details_from_fields(Pretty::default());
-            tracing_subscriber::registry()
-                .with(fmt_layer)
-                .with(perf_layer)
-                .init();
-
+                console_error_panic_hook::set_once();
+            tracing_wasm::set_as_global_default();
+        } else {
+            tracing_subscriber::fmt::init();
         }
     }
+    info!("Info");
+    warn!("Warn");
+    error!("Error");
     let event_loop = EventLoop::new();
     let window = WindowBuilder::new()
         .with_title("WGPU Demo")
@@ -41,7 +29,7 @@ pub fn run() {
         // Winit prevents sizing with CSS, so we have to set
         // the size manually when on web.
         use winit::dpi::PhysicalSize;
-        window.set_inner_size(PhysicalSize::new(450, 400));
+        window.set_inner_size(PhysicalSize::new(1024, 768));
 
         use winit::platform::web::WindowExtWebSys;
         web_sys::window()
