@@ -3,7 +3,7 @@ use state::State;
 mod vertex;
 use tracing::{error, info, warn};
 use vertex::Vertex;
-
+pub mod texture;
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 use winit::{
